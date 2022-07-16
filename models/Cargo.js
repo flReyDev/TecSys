@@ -9,10 +9,16 @@ const Cargo = dbConection.define('cargos', {
         autoIncrement: true
     },
     nombre: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate:{
+            len: [5, 40, { msg: "Longitud minima 5 a 40 caracteres!" }]
+        }
     },
     funciones: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate:{
+            len: [5, 100, { msg:"Longitud minima 5 maxima 100 caracteres!!" }]
+        }
     },
 },{ tableName: 'cargos'})
 

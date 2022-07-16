@@ -1,4 +1,4 @@
-const { DataTypes, Model } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const dbConection = require('../database/conection');
 const Materiales = require('./Materiales');
 const MaterialPorActividad = require('./MaterialPorActividad');
@@ -12,7 +12,14 @@ const Actividades =  dbConection.define('actividades',{
         autoIncrement: true
     },
     descripcion: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate: {
+            len:[10, 100, 
+              {
+                msg: "Longitud minina aceptada para el campo es de 10 caracteres intente nuevamente!"
+              }
+            ]
+        }
     }
 },{tableName: 'actividades'})
 

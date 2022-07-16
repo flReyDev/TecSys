@@ -14,7 +14,7 @@ const createArea = async (req = request, res = response) =>{
         const new_area = await Area.create({ nombre, ubicacion, telefono, oficina });
         const area = await new_area.save();
 
-        //if(   ) return res.status(400).json({ error: 'No se pudo registrar la solicitud, intenta nuevamente!!!' })
+        if(  area.length < 1 ) return res.status(400).json({ error: 'No se pudo registrar la solicitud, intenta nuevamente!!!' })
         res.json({ 
             area
         })
@@ -43,7 +43,80 @@ const createArea = async (req = request, res = response) =>{
     }
 }
 
+/**
+ * Solicitar todo los registros
+ * Ruta: GET /area/all
+ * @param {request} req 
+ * @param {response} res 
+ */
+ const getAllArea = async (req = request, res = response) =>{
+    try {
+        const areas = await Area.findAll();
+
+        if(  areas.length < 1 ) return res.status(400).json({ error: 'Sin registros!!!' })
+        res.json({ 
+            areas
+        })
+    } catch (error) {
+        res.status(400).json({error})
+    }
+}
+
+/**
+ * Actualizar un registro
+ * Ruta: PUT /area/update
+ * @param {request} req 
+ * @param {response} res 
+ */
+const updateArea = async (req = request, res = response) =>{
+    let { nombre, ubicacion, telefono, oficina } = req.body;
+    try {
+        const area = await Area.findOne({
+            where:{
+                nombre
+            }
+        });
+        if(  area.length < 1 ) return res.status(400).json({ error: 'El registro solicitado no es valido!!!' })
+        area.nombre     = nombre;
+        area.ubicacion  = ubicacion;
+        area.telefono   = telefono;
+        area.oficina    = oficina;
+        const update_area = await area.save();
+        res.json({ 
+            update_area
+        })
+    } catch (error) {
+        res.status(400).json({error})
+    }
+}
+
+/**
+ * Elimina un registro
+ * Ruta: DELETE /area/delete/:id
+ * @param {request} req 
+ * @param {response} res 
+ */
+ const deleteArea = async (req = request, res = response) =>{
+    let { id } = req.params;
+    try {
+        const area = Area.destroy({
+            where:{id}
+        }) 
+
+        if(  area.length < 1 ) return res.status(400).json({ error: 'El registro no pudo ser eliminado!!!' })
+        res.json({ 
+            msg: area || "Elemento eliminado!"
+        })
+    } catch (error) {
+        res.status(400).json({error})
+    }
+}
+
+
 module.exports = {
     createArea,
-    getArea
+    getArea,
+    updateArea,
+    getAllArea,
+    deleteArea
 }

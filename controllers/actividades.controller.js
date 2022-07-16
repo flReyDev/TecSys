@@ -13,8 +13,10 @@ const geAllActividades = async (req = request, res=response)=>{
    try {
         
     const actividades = await Actividades.findAll({
+        attributes:['id', 'descripcion'],
         include:[ {
-            model: Materiales
+            model: Materiales,
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
         } ]
     })
 
@@ -64,12 +66,15 @@ const getActividad = async (req = request, res=response)=>{
  const postActividad= async (req = request, res=response)=>{
 
     let { descripcion } = req.body;
+    
     try {
-     const actividades = await (await Actividades.create({descripcion})).save();
- 
-     if(actividades.length < 1) return res.status(404).json({ error: 'Error al intentar registrar el nuevo material!!!' })
-     
-     res.status(200).json({ actividades })
+      const actividad = await Actividades.create({ descripcion });
+      const nueva_actividad = await actividad.save();
+
+      if(nueva_actividad.length < 1) return res.status(400).json({ error: 'La solicitud no se pudo completar!!' }); 
+
+      res.status(200).json({ nueva_actividad })
+
     } catch (error) {
      res.status(400).json({error})
     }
