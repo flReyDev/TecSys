@@ -12,31 +12,46 @@ const Proyectos = dbConection.define('proyectos', {
             primaryKey: true
         },
         nombre: {
-            type: DataTypes.TEXT
+            type: DataTypes.TEXT,
+            validate:{
+                len: [5, 80, { msg: "Longitud minima de 5 y maxima de 80 caracteres." }]
+            }
         },
         descripcion: {
-            type: DataTypes.TEXT
+            type: DataTypes.TEXT,
+            validate: {
+                len: [10, 255, { msg: "Longitud minima de 10 y maxima de 255 caracteres!" }]
+            }
         },
         ubicacion: {
-            type: DataTypes.TEXT
+            type: DataTypes.TEXT,
+            validate: {
+                len: [10, 50, { msg: "Longitud minima de 10 y maxima de 255 caracteres!" }]
+            }
         },
         idtipo:{
-            type: DataTypes.BIGINT
+            type: DataTypes.BIGINT,
+            validate: {
+                isNumeric: true
+            }
         },
         inicio_previsto: {
-            type: DataTypes.DATE
+            type: DataTypes.DATE,
+            validate:{
+                isDate: true
+            }
         },
         idestado:{
-            type: DataTypes.BIGINT
+            type: DataTypes.BIGINT,
+            validate:{
+                isNumeric: true
+            }
         },
         idpresupuesto:{
-            type: DataTypes.BIGINT
-        },
-        createdAt:{
-            type: DataTypes.DATE
-        },
-        updatedAt:{
-            type: DataTypes.DATE
+            type: DataTypes.BIGINT,
+            validate: {
+                isNumeric: true
+            }
         }
     }
 )

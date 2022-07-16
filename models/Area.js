@@ -11,7 +11,7 @@ const Area = dbConection.define('area', {
     nombre: {
         type: DataTypes.TEXT,
         validate:{
-            len:[5, 10, { msg: 'Longitud minima de 5 caracteres maxima de 50'}]
+            len:[5, 50, { msg: 'Longitud minima de 5 caracteres maxima de 50'}]
         }
     },
     ubicacion: {

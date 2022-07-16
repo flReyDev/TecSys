@@ -7,7 +7,10 @@ const { validatorMiddlewares } = require("../middlewares/validator.middleware");
 const routerCargo = Router();
 
 routerCargo.get('/all', getAllCargo);
-routerCargo.get('/:id', getCargo);
+routerCargo.get('/:id',[
+    body('id', 'Identificador no valido')
+        .custom( (value, { req })=> Number.isInteger( req.params.id * 1 ) ?? value  )
+], validatorMiddlewares, getCargo);
 routerCargo.post('/create',[
     body('nombre', 'Error en el nombre del cargo valida e intenta nuevamente!!!!')
         .isString()
@@ -26,6 +29,9 @@ routerCargo.put('/update',[
         .isLength({ min: 5, max: 100 })
 ], validatorMiddlewares, updateCargo);
 
-routerCargo.delete('/delete/:id', deleteCargo);
+routerCargo.delete('/delete/:id',[
+    body('id', 'Identificador no valido!')
+        .custom( (value, { req })=> Number.isInteger( req.params.id * 1) ?? value)
+], validatorMiddlewares, deleteCargo);
 
 module.exports = routerCargo;

@@ -12,19 +12,35 @@ const Presupuesto = dbConection.define('presupuestos',{
         primaryKey: true
     },
     referencia: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate:{
+            contains: 'TEC-PRE',
+            len: [10, 100, { msg: "Error en al referencia, longitud minima 10 maximo 100 debe contener TEC-PRE" }]
+        }
     },
     fechaelaboracion: {
-        type: DataTypes.DATE
+        type: DataTypes.DATE,
+        validate: {
+            isDate: true
+        }
     },
     idusuario:{
-        type: DataTypes.BIGINT
+        type: DataTypes.BIGINT,
+        validate:{
+            isNumeric: true
+        }
     },
     descripcion: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate: {
+            len: [10, 100, { msg: "Longitud minima 10 maxima 100 caracteres" }]
+        }
     },
     obs: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate: {
+            len: [10, 200, { msg: "Longitud minima 10 maxima 200 caracteres" }]
+        }
     }
 })
 

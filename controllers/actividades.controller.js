@@ -38,18 +38,16 @@ const geAllActividades = async (req = request, res=response)=>{
 const getActividad = async (req = request, res=response)=>{
     let { id } = req.params;
     try {
-     const actividades = await Actividades.findAll({
-         include:[ 
-            {
-                model: Materiales
-            }
-         ],
-         where:{
-            id
-         }
-     })
-     if(actividades.length < 1) return res.status(404).json({ error: 'No existen el registros solicitado!!!' })
-     res.status(200).json({ actividades })
+     
+      if( Number.isInteger( id * 1 ) && id != 0 ){
+         const actividades = await Actividades.findAll({ include:[ {model: Materiales} ], where:{ id }});
+         if(!actividades || actividades.length < 1) 
+               return res.status(404).json({ error: 'No existen el registros solicitado!!!' })
+
+         res.status(200).json({ actividades })
+      }else{
+         res.status(200).json({ error: "No hay registros disponibles!!" })
+      }
     } catch (error) {
      res.status(400).json({error})
     }
@@ -118,13 +116,17 @@ const getActividad = async (req = request, res=response)=>{
  const deleteActividad = async (req = request, res=response)=>{
     let { id } = req.params;
     try {
-     const actividad = await Actividades.destroy({ 
-        where:{ 
-            id
-        }
-     })
-     if(actividad.length < 1) return res.status(404).json({ error: 'No se pudo eliminar el registrol!!!' })
-     res.status(200).json({ actividad })
+      if(Number.isInteger( id * 1 ) && id != 0){
+         
+         const actividad = await Actividades.destroy({ where:{ id } })
+         
+         if(!actividad) 
+               return res.status(404).json({ error: 'No se pudo eliminar el registrol!!!' })
+
+         res.status(200).json({ actividad })
+      }else{
+         res.status(200).json({ error: "No se encuentra el registro por el identificador!!" })
+      }
     } catch (error) {
      res.status(400).json({error})
     }

@@ -7,7 +7,10 @@ const routerActividad = Router();
 
 
 routerActividad.get('/all',     geAllActividades);
-routerActividad.get('/:id',     getActividad);
+routerActividad.get('/:id',[
+    body('id', 'Identificador no valido!!')
+        .custom( (value, { req })=> Number.isInteger( req.params.id * 1 ) ?? value )
+], validatorMiddlewares, getActividad);
 routerActividad.post('/create',[
     body('descripcion', 'Error en la descripción de la actividad verifica e intenta de nuevo!!')
         .isString()
@@ -26,7 +29,7 @@ validatorMiddlewares,
 updatedActividad);
 routerActividad.delete('/delete/:id',[
     body('id', 'El identificador no es valido!!')
-        .isNumeric()
+        .custom( (value, { req })=> Number.isInteger( req.params.id * 1 ) ?? value )
 ], validatorMiddlewares, deleteActividad);
 
 module.exports = routerActividad;

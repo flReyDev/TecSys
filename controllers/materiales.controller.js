@@ -10,12 +10,12 @@ const TipoMaterial = require("../models/TipoMaterial");
  * @returns Json()
  */
 const geAlltMateriales = async (req = request, res=response)=>{
+
    try {
     const materiales = await Materiales.findAll({
         include:[
          { model: TipoMaterial, attributes: ['descripcion'] },
       ],
-        
     })
 
     if(materiales.length < 1) return res.status(404).json({ error: 'No existen registros disponibles!!!' })
@@ -36,13 +36,20 @@ const geAlltMateriales = async (req = request, res=response)=>{
 const getMaterial = async (req = request, res=response)=>{
     let { id } = req.params;
     try {
-     const materiales = await Materiales.findByPk(id, {
-         include:[TipoMaterial]
-     })
- 
-     if(materiales.length < 1) return res.status(404).json({ error: 'No existen el registros solicitado!!!' })
-     
-     res.status(200).json({ materiales })
+
+      if(Number.isInteger(id*1) && id != 0){
+         const materiales = await Materiales.findByPk(id, {
+            include:[TipoMaterial]
+        })
+
+        if(!materiales) 
+               return res.status(404).json({ error: 'No existen el registros solicitado!!!' })
+        
+        res.status(200).json({ materiales })
+
+      }else{
+         res.status(400).json({ msg: "No hay registros, valida e intenta nuevamente!" })
+      }
     } catch (error) {
      res.status(400).json({error})
     }
@@ -79,19 +86,19 @@ const getMaterial = async (req = request, res=response)=>{
  */
  const updatetMaterial = async (req = request, res=response)=>{
 
-    let { descripcion, codigo, tipomaterialId, um } = req.body;
+    let {id, descripcion, codigo, tipomaterialId, um } = req.body;
     try {
-     const materiales = await Materiales.findOne({ 
+     const material = await Materiales.findOne({ 
         where:{ 
-            codigo 
+            id
         }
      })
-     materiales.codigo          = codigo;
-     materiales.descripcion     = descripcion;
-     materiales.tipomaterialId  = tipomaterialId;
-     materiales.um              = um;
+     material.codigo          = codigo;
+     material.descripcion     = descripcion;
+     material.tipomaterialId  = tipomaterialId;
+     material.um              = um;
 
-     const materialUpdate = await materiales.save();
+     const materialUpdate = await material.save();
 
      if(materialUpdate.length < 1) return res.status(404).json({ error: 'No se pudo actualizar el registrol!!!' })
      
@@ -111,13 +118,20 @@ const getMaterial = async (req = request, res=response)=>{
  const deleteMaterial = async (req = request, res=response)=>{
     let { id } = req.params;
     try {
-     const materiales = await Materiales.destroy({ 
-        where:{ 
-            id
-        }
-     })
-     if(materiales.length < 1) return res.status(404).json({ error: 'No se pudo eliminar el registrol!!!' })
-     res.status(200).json({ materiales })
+
+      if( Number.isInteger( id * 1 ) && id != 0 ){
+
+         const material = await Materiales.destroy({ where:{id} });
+
+         if(!material) 
+            return res.status(404).json({ error: 'No se pudo eliminar el registrol!!!' })
+
+         res.status(200).json({ material })
+
+      }else {
+         res.status(200).json({ error: 'No existen registros!' })
+      }
+
     } catch (error) {
      res.status(400).json({error})
     }

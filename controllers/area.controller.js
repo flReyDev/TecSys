@@ -32,12 +32,16 @@ const createArea = async (req = request, res = response) =>{
  const getArea = async (req = request, res = response) =>{
     let { id } = req.params;
     try {
-        const area = await Area.findByPk(id);
-
-        if(  area.length < 1 ) return res.status(400).json({ error: 'El registro solicitado no es valido!!!' })
-        res.json({ 
-            area
-        })
+       
+        if( Number.isInteger( id * 1 ) && id != 0){
+            const area = await Area.findByPk(id);
+            if(  !area ) return res.status(400).json({ error: 'El registro solicitado no es valido!!!' })
+            res.status(200).json({ 
+                area
+            })
+        }else{
+            res.status(400).json({ error: "Sin registros disponibles!" })
+        }
     } catch (error) {
         res.status(400).json({error})
     }
@@ -99,14 +103,16 @@ const updateArea = async (req = request, res = response) =>{
  const deleteArea = async (req = request, res = response) =>{
     let { id } = req.params;
     try {
-        const area = Area.destroy({
-            where:{id}
-        }) 
 
-        if(  area.length < 1 ) return res.status(400).json({ error: 'El registro no pudo ser eliminado!!!' })
-        res.json({ 
-            msg: area || "Elemento eliminado!"
-        })
+        if( Number.isInteger( id * 1 ) && id != 0 ){
+            const area = await Area.destroy({ where:{ id } });
+            if(!area) 
+                 return res.status(400).json({ error: 'El registro no pudo ser eliminado!!!' })
+
+            res.status(200).json({ area })
+        }else{
+            res.status(404).json({ error: "El registro no se pudo eliminar!!" });
+        }
     } catch (error) {
         res.status(400).json({error})
     }

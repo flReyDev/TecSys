@@ -26,6 +26,10 @@ const MaterialPorActividad = dbConection.define('materialporactividad',{
     },
     valortotal: {
         type: DataTypes.DOUBLE
+    },
+    consumido: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0
     }
 }, {
     tableName: 'materialporactividad'

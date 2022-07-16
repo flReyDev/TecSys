@@ -7,15 +7,18 @@ const Usuario = require("../models/Usuario");
 
 /**
  * Función que permite obtener todos lo registros de presupuestos de la base de datos
+ * Ruta: /presupuestos/all
  * @param {request} req 
  * @param {response} res 
  * @returns Json()
  */
 const getPresupuestos = async (req = request, res = response)=>{
     try {
+
         const presupuestos =  await Presupuesto.findAll();
         if(presupuestos.length < 1) res.status(400).json({ errro: 'No existen presupuesto registrados!!' })
         res.status(200).json({presupuestos})
+
     } catch (error) {
         res.status(400).json({error: error})
     }
@@ -31,9 +34,18 @@ const getPresupuestos = async (req = request, res = response)=>{
 const getPresupuesto = async (req = request, res = response)=>{
     let { id } = req.params;
     try {
-        const presupuesto = await Presupuesto.findByPk(id);
-        if(presupuesto.length < 1) return res.status(400).json({error: 'No existen registros con el identificador!!!!!'})
-        res.status(200).json({presupuesto});
+
+        if(Number.isInteger(id * 1) && id != 0 ){
+
+            const presupuesto = await Presupuesto.findByPk(id);
+            if(presupuesto.length < 1) return res.status(400).json({error: 'No existen registros con el identificador!!!!!'})
+            
+            res.status(200).json({presupuesto});
+
+        }else{
+            res.status(400).json({ msg: "No existen registros, valida e intenta nuevamente!" });
+        }
+        
     } catch (error) {
         res.status(400).json({error})
     }
@@ -105,10 +117,10 @@ const createPresupuesto = async (req = request, res = response)=>{
  * @returns Json
  */
 const updatePresupuesto = async (req = request, res = response)=>{
-    let { referencia, descripcion, obs } = req.body;
+    let {id, referencia, descripcion, obs } = req.body;
 
     try {
-        const pre_existente = await Presupuesto.findOne({ where: { referencia } });
+        const pre_existente = await Presupuesto.findOne({ where: { id } });
         if(pre_existente.length < 1) return res.status(404).json({ error: 'El registro que intenta actualizar no existe!!' })
 
         pre_existente.referencia = referencia;

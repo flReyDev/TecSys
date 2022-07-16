@@ -51,26 +51,36 @@ const getProject = async (req = request, res = response)=>{
 
     let { id } = req.params;
     try {
-        const proyecto = await Proyectos.findAll({
-            where:{
-                id
-            },
-            include: [
-                {
-                    model: Estados,
-                    attributes: ['descripcion']
+        
+        if( Number.isInteger( id * 1 ) && id != 0 ){
+
+            const proyecto = await Proyectos.findOne({
+                where:{
+                    id
                 },
-                {
-                    model: TipoProyectos,
-                    attributes: ['descripcion']
-                },
-                {
-                    model: Presupuesto
-                }
-            ]
-        });
-        if(proyecto.length < 1) return res.status(400).json({ msg: 'No existe el proyecto solicitado, verifica e intenta de nuevo!!' })
-        res.json({proyecto})
+                include: [
+                    {
+                        model: Estados,
+                        attributes: ['descripcion']
+                    },
+                    {
+                        model: TipoProyectos,
+                        attributes: ['descripcion']
+                    },
+                    {
+                        model: Presupuesto
+                    }
+                ]
+            });
+
+            if(!proyecto) 
+                return res.status(400).json({ msg: 'No existe el proyecto solicitado, verifica e intenta de nuevo!!' })
+
+            res.json({proyecto})
+        }else{
+            res.status(404).json({ error: "No se puede recuperar el registro solicitado!" })
+        }
+
     } catch (error) {
         res.status(500).json({error})
     }
@@ -79,9 +89,8 @@ const getProject = async (req = request, res = response)=>{
 /**
  * Función que permite al creación de un nuevo proyecto
  * Ruta: POST /projects/create
- * @param {*} req 
- * @param {*} res 
- * @param {*} validatorMiddlewares 
+ * @param {request} req 
+ * @param {response} res  
  */
 const createProject = async (req = request, res = response)=>{
     let { body } = req;
@@ -104,13 +113,16 @@ const createProject = async (req = request, res = response)=>{
 const deleteProject = async (req = request, res = response)=>{
     let { id } = req.params;
     try {
-        const del = await Proyectos.destroy({
-            where:{
-                id
-            }
-        })
-        if(del.length < 1) return res.status(400).json({ error: 'Operación declinada, valida e intenta de nuevo!!' })
-        res.status(400).json({ del });
+        
+        if( Number.isInteger( id * 1 ) && id != 0 ){
+            const del = await Proyectos.destroy({ where:{ id } });
+            if(!del) 
+                return res.status(400).json({ error: 'Operación declinada, valida e intenta de nuevo!!' })
+            
+            res.status(400).json({ del });
+        }else{
+            res.status(404).json({ error: "No se puede eliminar el registro!" });
+        }
     } catch (error) {
         res.status(400).json({ error })
     }

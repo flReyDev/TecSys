@@ -7,7 +7,10 @@ const { validatorMiddlewares } = require("../middlewares/validator.middleware");
 const routerArea = Router();
 
 routerArea.get('/all', getAllArea);
-routerArea.get('/:id', getArea);
+routerArea.get('/:id',[
+    body('id', 'Error en el identificador!')
+        .custom( ( value, { req } )=>  Number.isInteger( req.params.id * 1 ) ?? value )
+], validatorMiddlewares, getArea);
 
 routerArea.post('/create',[
     body('nombre', 'Nombre del área es incorrecto')
@@ -42,7 +45,10 @@ routerArea.put('/update',[
         .isLength({ min: 4, max: 10 })
 ], validatorMiddlewares, updateArea);
 
-routerArea.delete('/delete/:id', deleteArea);
+routerArea.delete('/delete/:id',[
+    body('id', 'Identificador no valido!!')
+        .custom( (value, { req })=> Number.isInteger( req.params.id * 1 ) ?? value)
+], validatorMiddlewares, deleteArea);
 
 
 module.exports = routerArea;

@@ -10,25 +10,61 @@ const Usuario = dbConection.define('usuarios', {
         autoIncrement: true
     },
     nombre: {
-        type: DataTypes.TEXT
+        type: DataTypes.TEXT,
+        validate: {
+            len: [5, 50, { msg: "Longitud minima de 5 y maxima de 50 caracteres!" }]
+        }
     },
     apellido: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        validate: {
+            len: [5, 50, { msg: "Longitud minima de 5 y maxima de 50 caracteres!" }]
+        }
+    },
+    email:{
+        type: DataTypes.STRING,
+        validate:{
+            isEmail: true
+        }
     },
     cargoId:{
-        type:DataTypes.BIGINT
+        type:DataTypes.BIGINT,
+        validate:{
+            isNumeric: true
+        }
     },
     edad:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        validate:{
+            isNumeric: true
+        }
     },
     areaId:{
-        type: DataTypes.BIGINT
+        type: DataTypes.BIGINT,
+        validate:{
+            isNumeric: true
+        }
     },
     direccion: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        len: [10, 50, { msg: "Longitud minima de 5 y maxima de 50 caracteres!" }]
+
     },
     telefono:{
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        validate:{
+            isNumeric: true
+        }
+    },
+    intentos:{
+        type: DataTypes.INTEGER
+    },
+    estado:{
+        type: DataTypes.INTEGER,
+        defaultValue: 1
+    },
+    tiempo_bloqueo:{
+        type: DataTypes.TIME
     },
     ultimasession:{
         type: DataTypes.DATE,

@@ -10,11 +10,19 @@ const Cargo = require("../models/Cargo");
  const getCargo = async (req = request, res = response) =>{
     let { id } = req.params;
     try {
-        const cargo = await Cargo.findByPk(id);
-        if(  cargo.length < 1 ) return res.status(400).json({ error: 'El registro solicitado no es valido!!!' })
-        res.json({ 
-            cargo
-        })
+
+        if( Number.isInteger( id * 1 ) && id != 0 ){
+
+            const cargo = await Cargo.findByPk(id);
+            if(  !cargo ) 
+                return res.status(400).json({ error: 'El registro solicitado no es valido!!!' })
+            
+            res.json({ 
+                cargo
+            })
+        }else {
+            res.status(404).json({ error: "El identificador no es valido!!" })
+        }
     } catch (error) {
         res.status(400).json({error})
     }
@@ -92,11 +100,22 @@ const createCargo = async (req = request, res = response) =>{
  const deleteCargo = async (req = request, res = response) =>{
     let { id } = req.params;
     try {
-        const del_cargo = await Cargo.destroy({where: {id}});
-        if( del_cargo.length < 1  ) return res.status(400).json({ error: 'No se pudo registrar la solicitud, intenta nuevamente!!!' })
-        res.json({ 
-            del_cargo
-        })
+
+        if( Number.isInteger( id * 1 ) && id != 0 ){
+
+            const del_cargo = await Cargo.destroy({where: {id}});
+
+            if( !del_cargo  ) 
+                return res.status(400).json({ error: 'No se pudo eliminar el registro, intenta nuevamente!!!' })
+            
+            res.json({ 
+                del_cargo
+            })
+
+        }else{
+            res.status( 400 ).json({ error: "No se pudo elimnar el registro!" })
+        }
+
     } catch (error) {
         res.status(400).json({error})
     }

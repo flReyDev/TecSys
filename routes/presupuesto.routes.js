@@ -6,29 +6,50 @@ const { validatorMiddlewares } = require("../middlewares/validator.middleware");
 const routerPresupuesto = Router();
 
 routerPresupuesto.get('/all', getPresupuestos);
-routerPresupuesto.get('/:id', getPresupuesto);
+routerPresupuesto.get('/:id',[
+    body('id', "El identificador debe ser de tipo numero, valida e intenta nuevamente!")
+        .custom( (value, { req })=> Number.isInteger( req.params.id * 1) ?? value)
+], validatorMiddlewares, getPresupuesto);
 routerPresupuesto.get('/detail/:id', detailPresupuesto)
 
 routerPresupuesto.post('/create',
 [
     body('referencia', 'La referencia no es valida  Ejem: TEC-PRE-0000')
         .isString()
-        .isLength({min: 10}),
-        body('fechaelaboracion', "Error en la fecha valida e intenta nuevamente!!")
+        .custom((value)=>value.indexOf('TEC-PRE') === 0)
+        .isLength({min: 10, max: 100}),
+        body('fechaelaboracion', "Error en la fecha, valida e intenta nuevamente!!")
             .isDate(),
         body('idusuario', 'El identificador del usuario no es valido!')
             .isNumeric(),
         body('descripcion', 'La descripción no es lo suficientemente descriptiva!!!')
-            .isLength({ min: 15 }),
+            .isLength({ min: 10, max:100 }),
         body('obs', 'Las observaciones no permiten tener encuenta las condiciones o posibles limitaciones en la ejecución del proyecto!!!!')
-         .isLength({ min: 15 })
+         .isLength({ min: 10, max: 200 })
     ],
 validatorMiddlewares,
  createPresupuesto);
 
 
-routerPresupuesto.put('/update', updatePresupuesto);
-routerPresupuesto.delete('/delete/:id', deletePresupuesto)
+routerPresupuesto.put('/update',[
+    body('referencia', 'La referencia no es valida  Ejem: TEC-PRE-0000')
+        .isString()
+        .custom((value)=> value.indexOf('TEC-PRE') === 0)
+        .isLength({min: 10, max: 100}),
+        body('fechaelaboracion', "Error en la fecha, valida e intenta nuevamente!!")
+            .isDate(),
+        body('idusuario', 'El identificador del usuario no es valido!')
+            .isNumeric(),
+        body('descripcion', 'La descripción no es lo suficientemente descriptiva!!!')
+            .isLength({ min: 10, max:100 }),
+        body('obs', 'Las observaciones no permiten tener encuenta las condiciones o posibles limitaciones en la ejecución del proyecto!!!!')
+         .isLength({ min: 10, max: 200 })
+    ],
+validatorMiddlewares, updatePresupuesto);
+routerPresupuesto.delete('/delete/:id',[
+    body('id', 'El identificador debe ser de tipo numero, valida e intenta nuevamente!!')
+        .custom((value, { req })=>  Number.isInteger(req.params.id*1) ?? value )
+], validatorMiddlewares, deletePresupuesto)
 
 module.exports = {
     routerPresupuesto
