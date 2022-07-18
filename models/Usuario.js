@@ -2,6 +2,7 @@ const { DataTypes } = require('sequelize');
 const dbConection = require('../database/conection');
 const Area = require('./Area');
 const Cargo = require('./Cargo');
+const Role = require('./Roles');
 
 const Usuario = dbConection.define('usuarios', {
     id: {
@@ -56,6 +57,12 @@ const Usuario = dbConection.define('usuarios', {
             isNumeric: true
         }
     },
+    roleId:{
+        type: DataTypes.INTEGER,
+        validate: {
+            isNumeric: true
+        }
+    },
     intentos:{
         type: DataTypes.INTEGER
     },
@@ -81,6 +88,9 @@ Area.hasMany(Usuario, {foreignKey: 'areaId'});
 
 Usuario.belongsTo(Cargo, {foreignKey: 'cargoId'});
 Cargo.hasMany(Usuario, {foreignKey: 'cargoId'});
+
+Usuario.belongsTo(Role, { foreignKey: 'roleId' });
+Role.hasMany(Usuario, { foreignKey: 'roleId' });
 
 
 /******************

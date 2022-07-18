@@ -3,6 +3,8 @@ const byCrypt = require('bcrypt');
 const Area = require("../models/Area");
 const Cargo = require("../models/Cargo");
 const Usuario = require("../models/Usuario");
+const Role = require("../models/Roles");
+const { default: ManagerJwt, generateJwt } = require("../utils/ManagerJwt");
 
 /**
  * Función que permite obtener todos los usuarios registrados en el sistema
@@ -42,7 +44,7 @@ const getUser = async (req = request, res = response)=>{
         if( Number.isInteger( id * 1 ) && id != 0 ){
             const usuario = await Usuario.findAll({
                 attributes:{ exclude: ['ultimasession', 'contrasena'] },
-                include:[Area,Cargo],
+                include:[Area,Cargo,Role],
                 where:{id}
             })
             if(!usuario || usuario.length < 1) 
@@ -179,41 +181,48 @@ const deleteUser = (req = request, res = response)=>{
     try {
         const usuario = await Usuario.findOne({
             where:{
-                email: correo,
-            }
+                email: correo
+            },
+            include: Role
         })
 
         if( !usuario || usuario.length < 1 )
             return res.status(400).json({ error: "Credenciales incorrectas, valida e intenta nuevamente 1" });
 
+
+        if( usuario.tiempo_bloqueo > (new Date().getTime()) )
+            return res.status(401).json({ error: "Tu cuenta a sido bloqueada por seguridad intenta nuevamente en 15 minutos!" })
+        
+
+        if( usuario.estado === 0){
+            usuario.tiempo_bloqueo  = 0;
+            usuario.estado          = 1;
+            usuario.intentos        = 0;
+        }
+
+
         let valid_password = byCrypt.compareSync(password, usuario.contrasena);
 
         if( !valid_password ) {
-            
-            //cada vez que ingresa a este if quiere decir que se equivoca con la contraseña
-
             usuario.intentos += attemps;
-            
-
-            //implementar la introducción del tiempo de bloqueo hay que cambiar el tipo de dato en la base 
             if(usuario.intentos === 3){
-                usuario.tiempo_bloqueo = new Date().getTime() + 1200000;
+                usuario.tiempo_bloqueo = (new Date().getTime() + 30000);
                 usuario.estado = 0;
             }
-
-            console.log( usuario.nombre );
-
             await usuario.save();
-
             return res.status(400).json({ error: "Credenciales incorrectas, valida e intenta nuevamente 2" });
         }
+
         //generar token 
 
+        await usuario.save();
 
-        res.json({ msg: "tu token", attemps })
+        let token = await generateJwt( usuario );
+
+        res.json({ token })
 
     } catch (error) {
-        res.json({
+        res.status(401).json({
             error
         })
     }
