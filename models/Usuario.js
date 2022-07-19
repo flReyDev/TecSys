@@ -66,7 +66,7 @@ const Usuario = dbConection.define('usuarios', {
     intentos:{
         type: DataTypes.INTEGER
     },
-    estado:{
+    estado_acceso:{
         type: DataTypes.INTEGER,
         defaultValue: 1
     },

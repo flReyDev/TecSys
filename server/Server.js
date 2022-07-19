@@ -1,16 +1,18 @@
 
-const express        = require("express");
+const express = require("express");
+const cors = require('cors')
+var cookieParser = require('cookie-parser')
+
+
 const { routerProjects } = require("../routes/proyecto.routes");
 const { routerPresupuesto } = require("../routes/presupuesto.routes");
-
-const cors = require('cors')
-
 const database = require('../database/conection');
 const routerMateriales = require("../routes/materiales.routes");
 const routerActividad = require("../routes/actividades.routes");
 const { routerUsers } = require("../routes/usuarios.routes");
 const routerArea = require("../routes/area.routes");
 const routerCargo = require("../routes/cargos.routes");
+const authRoutes = require("../routes/auth.routes");
 
 
 class Server{
@@ -19,6 +21,7 @@ class Server{
     port    = Number;
     apiRoutes = {
         usuarios:  '/users',
+        auth: '/auth',
         proyectos: '/projects',
         presupuestos: '/presupuestos',
         materiales: '/material',
@@ -52,6 +55,8 @@ class Server{
         this.app.use(express.json());
         //url-encoder
         this.app.use(express.urlencoded({ extended: true }))
+
+        this.app.use( cookieParser() );
         //static files
         //this.app.use(express.static('public'));
     }
@@ -61,6 +66,7 @@ class Server{
      */
     routes(){
         this.app.use( this.apiRoutes.usuarios,      routerUsers )
+        this.app.use( this.apiRoutes.auth,          authRoutes )
         this.app.use( this.apiRoutes.proyectos,     routerProjects )
         this.app.use( this.apiRoutes.presupuestos,  routerPresupuesto )
         this.app.use( this.apiRoutes.materiales,    routerMateriales)

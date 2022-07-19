@@ -4,7 +4,7 @@ const Area = require("../models/Area");
 const Cargo = require("../models/Cargo");
 const Usuario = require("../models/Usuario");
 const Role = require("../models/Roles");
-const { default: ManagerJwt, generateJwt } = require("../utils/ManagerJwt");
+const { generateJwt } = require("../utils/ManagerJwt");
 
 /**
  * Función que permite obtener todos los usuarios registrados en el sistema
@@ -194,12 +194,10 @@ const deleteUser = (req = request, res = response)=>{
             return res.status(401).json({ error: "Tu cuenta a sido bloqueada por seguridad intenta nuevamente en 15 minutos!" })
         
 
-        if( usuario.estado === 0){
+        if( usuario.estado_acceso === 0){
             usuario.tiempo_bloqueo  = 0;
-            usuario.estado          = 1;
-            usuario.intentos        = 0;
+            usuario.estado_acceso   = 1;
         }
-
 
         let valid_password = byCrypt.compareSync(password, usuario.contrasena);
 
@@ -207,20 +205,21 @@ const deleteUser = (req = request, res = response)=>{
             usuario.intentos += attemps;
             if(usuario.intentos === 3){
                 usuario.tiempo_bloqueo = (new Date().getTime() + 30000);
-                usuario.estado = 0;
+                usuario.estado_acceso = 0;
+                usuario.intentos = 0;
             }
             await usuario.save();
             return res.status(400).json({ error: "Credenciales incorrectas, valida e intenta nuevamente 2" });
         }
-
-        //generar token 
+        if( usuario.intentos > 0 ) usuario.intentos = 0;
 
         await usuario.save();
-
+        //generar token
         let token = await generateJwt( usuario );
+        
+        //aqui se forma el refresh
 
         res.json({ token })
-
     } catch (error) {
         res.status(401).json({
             error

@@ -1,4 +1,6 @@
+const { response } = require('express');
 var jwt = require('jsonwebtoken');
+const { msg_jwt } = require('../helpers/msg');
 
 /**
  * Función que permite generar un token de acceso al sistema
@@ -10,18 +12,17 @@ const generateJwt = async ( user )=>{
         return jwt.sign(
             { 
                 _id: user.id,
-                _role: user.role.nombre,
-                iat: (new Date().getTime()),
-                aud: 'Client access',
-                iss: 'TecSys Sas'
+                _role: user.role.nombre
             }, 
-            process.env.JWT_SECRET, 
-            { 
-                expiresIn: 60 * 15 
+            process.env.JWT_SECRET,
+            {
+                expiresIn: 60 *15,
+                audience: "Client Access",
+                issuer: "Tecsys Sas"
             }
         );
     } catch (error) {
-        console.log( error );
+        msg_jwt(error);
     }
 }
 
@@ -30,16 +31,33 @@ const generateJwt = async ( user )=>{
  * @param {string} token 
  * @returns JWT Decode
  */
-const validateJwt = async ( token ) =>{
+const verifyJwt = async ( token ) =>{
+    return jwt.verify( token, process.env.JWT_SECRET );
+}
+
+
+//Pendiente por implementar
+/**
+ * Pendiente implementar el refresh
+ * @param {*} _id 
+ * @param {*} res 
+ */
+const tokenRefresh = async ( _id, res = response ) =>{
+
     try {
-       return jwt.decode( token, process.env.JWT_SECRET );
+        const refrehsToken = jwt.sign({ _id }, process.env.JWT_REFRESH, { expiresIn: 60*60 })
+        res.cookie("refrehsToken", refrehsToken, {
+            httpOnly: true,
+            domain: "tecsys.com",
+            expires: new Date(Date.now() + 3600)
+        })
     } catch (error) {
-        let msg = error.message;
-        return null;
+        res.status(500).json({ error: "Errors Interno!" })
     }
+
 }
 
 module.exports  = {
     generateJwt,
-    validateJwt
+    verifyJwt
 }
