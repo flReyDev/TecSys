@@ -18,8 +18,6 @@ routerPresupuesto.post('/create',
         .isString()
         .custom((value)=>value.indexOf('TEC-PRE') === 0)
         .isLength({min: 10, max: 100}),
-        body('fechaelaboracion', "Error en la fecha, valida e intenta nuevamente!!")
-            .isDate(),
         body('idusuario', 'El identificador del usuario no es valido!')
             .isNumeric(),
         body('descripcion', 'La descripción no es lo suficientemente descriptiva!!!')
@@ -36,8 +34,6 @@ routerPresupuesto.put('/update',[
         .isString()
         .custom((value)=> value.indexOf('TEC-PRE') === 0)
         .isLength({min: 10, max: 100}),
-        body('fechaelaboracion', "Error en la fecha, valida e intenta nuevamente!!")
-            .isDate(),
         body('idusuario', 'El identificador del usuario no es valido!')
             .isNumeric(),
         body('descripcion', 'La descripción no es lo suficientemente descriptiva!!!')

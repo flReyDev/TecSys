@@ -32,7 +32,7 @@ const getProjects = async (req = request, res = response)=>{
                ['id', 'DESC']
             ]
         });
-        if(!proyectos) return res.status(400).json({ msg: 'No existen proyectos!!!' })
+        if(!proyectos || proyectos.length < 1) return res.status(400).json({ msg: 'No existen proyectos!!!' })
         res.json({proyectos})
     } catch (error) {
         res.status(500).json({error})
@@ -73,7 +73,7 @@ const getProject = async (req = request, res = response)=>{
                 ]
             });
 
-            if(!proyecto) 
+            if(!proyecto || proyecto.length < 1) 
                 return res.status(400).json({ msg: 'No existe el proyecto solicitado, verifica e intenta de nuevo!!' })
 
             res.json({proyecto})

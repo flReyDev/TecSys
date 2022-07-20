@@ -17,7 +17,8 @@ const geAllActividades = async (req = request, res=response)=>{
         attributes:['id', 'descripcion'],
         include:[ {
             model: Materiales,
-            attributes: { exclude: [ 'createdAt', 'updatedAt' ] }
+            attributes: { exclude: [ 'createdAt', 'updatedAt' ] },
+            through: { MaterialPorActividad }
         } ]
     })
 
@@ -67,33 +68,20 @@ const getActividad = async (req = request, res=response)=>{
     let { descripcion, material } = req.body;
     
     try {
-
-    
-
       const actividad = await Actividades.create({ descripcion });
-
       const materiales = await Materiales.bulkCreate(material);
-
-      let values = material;
-
-      for (let i=0; i < values.length; i++) {   
          await actividad.addMateriales(materiales, 
             { through: { 
-               cantidad:      values[i].relacion.cantidad, 
-               valorsiniva:   values[i].relacion.valorsiniva, 
-               iva:           values[i].relacion.iva, 
-               valortotal:    values[i].relacion.valortotal 
+               cantidad:      0,  
+               valorsiniva:   0,    
+               iva:           0,      
+               valortotal:    0
              } });
-      }
-
-      
-
+   
       const nueva_actividad = await actividad.save();
 
       if(nueva_actividad.length < 1) 
             return res.status(400).json({ error: 'La solicitud no se pudo completar!!' }); 
-
-
       res.status(200).json({ nueva_actividad })
 
     } catch (error) {

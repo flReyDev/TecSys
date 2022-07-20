@@ -1,5 +1,6 @@
 const { request, response } = require("express");
 const Actividades = require("../models/Actividades");
+const ActividadPorItem = require("../models/ActividadPorItem");
 const Items = require("../models/Items");
 const Materiales = require("../models/Materiales");
 const Presupuesto = require("../models/Presupuesto");
@@ -99,10 +100,25 @@ const detailPresupuesto = async (req = request, res= response)=>{
  * @param {response} res 
  */
 const createPresupuesto = async (req = request, res = response)=>{
-    let { body } = req;
+    let { referencia, idusuario, descripcion, obs, items } = req.body;
+
+    console.log( referencia );
     try {
-        const nuevoPresupuesto = await (await Presupuesto.create(body)).save();
-        res.status(201).json({nuevoPresupuesto});
+        const nuevoPresupuesto = await Presupuesto.create({
+            referencia,
+            idusuario,
+            descripcion,
+            obs
+        });
+
+        const new_items = await Items.bulkCreate( items );
+
+        await nuevoPresupuesto.addItems(new_items, { through: ActividadPorItem });
+
+        const creado = await nuevoPresupuesto.save();
+
+
+        res.status(201).json({creado});
     } catch (error) {
         res.status(400).json({error})
     }

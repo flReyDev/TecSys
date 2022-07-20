@@ -20,6 +20,7 @@ const Presupuesto = dbConection.define('presupuestos',{
     },
     fechaelaboracion: {
         type: DataTypes.DATE,
+        defaultValue: new Date().toISOString(),
         validate: {
             isDate: true
         }
