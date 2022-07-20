@@ -24,7 +24,7 @@ const Actividades =  dbConection.define('actividades',{
 },{tableName: 'actividades'})
 
 
-Actividades.belongsToMany(Materiales, { through: MaterialPorActividad, foreignKey:"materialeId"})
-Materiales.belongsToMany(Actividades, { through: MaterialPorActividad, foreignKey:"actividadeId"})
+Actividades.belongsToMany(Materiales, { through: MaterialPorActividad, foreignKey:"actividadeId"})
+Materiales.belongsToMany(Actividades, { through: MaterialPorActividad, foreignKey:"materialeId"})
 
 module.exports = Actividades;

@@ -13,6 +13,7 @@ const { routerUsers } = require("../routes/usuarios.routes");
 const routerArea = require("../routes/area.routes");
 const routerCargo = require("../routes/cargos.routes");
 const authRoutes = require("../routes/auth.routes");
+const whiteList = require("../helpers/whiteListCors");
 
 
 class Server{
@@ -34,7 +35,6 @@ class Server{
         this.app    = express();
         this.port   = process.env.PORT || 3000;
 
-        // this.dbConecction();
         this.middlewares();
         this.routes();
     }
@@ -49,8 +49,21 @@ class Server{
     }
 
     middlewares(){
+
+
+        
         //cors
-        this.app.use(cors());
+        // this.app.use(cors({
+        //     origin: function(origin, callback){
+        //         if(whiteList.includes(origin)){
+        //             return callback(null, origin);
+        //         }
+        //         return callback( `Seguridad de Cors, No estas autorizado para acceder desde ${ origin }` )
+        //     }
+        // }));
+
+        this.app.use( cors() )
+
         //parsear el contenido del body a Json()
         this.app.use(express.json());
         //url-encoder

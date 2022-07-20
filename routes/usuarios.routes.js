@@ -7,18 +7,18 @@ const { validatorMiddlewares } = require('../middlewares/validator.middleware');
 
 const routerUsers = Router();
 
-// router.use(function auditar(req, res, next) {
-//     console.log(`El usuarios Pepito visito: ${ req.originalUrl }  `, (new Date()).toISOString());
-//     next();
-// });
-
-
-routerUsers.get('/all',token_validator, validRole(['Admin', 'Supervisor']), getUsers);
+routerUsers.get('/all', 
+                token_validator,
+                validRole(['Admin', 'Supervisor']),
+                getUsers);
 
 routerUsers.get('/:id',[
     body('id', 'Error en el identificador del usuario, valida e intenta nuevamente!')
         .custom( (value, { req })=> Number.isInteger( req.params.id * 1 ) ?? value)
-],validatorMiddlewares ,token_validator, getUser);
+    ],
+    validatorMiddlewares,
+    token_validator,
+     getUser);
 
 routerUsers.put('/update',[
     body('nombre', 'Error en el nombre del usuario, valida e intenta nuevamente!')
@@ -43,12 +43,16 @@ routerUsers.put('/update',[
         .isLength({ min: 8, max: 12 }),
     body('contrasena', 'Error en la contraseña proporcionado para el usuario!!')
         .isLength({ min: 8 })
-],validatorMiddlewares, putUser);
+    ],
+    validatorMiddlewares,
+    putUser);
 
 routerUsers.delete('/del/:id',[
     body('id', 'Error en el identificador del usuario, valida e intenta nuevamente!')
         .custom( (value, { req })=> Number.isInteger( req.params.id * 1 ) ?? value)
-], validatorMiddlewares, deleteUser);
+    ], 
+    validatorMiddlewares, 
+    deleteUser);
 
 
 module.exports = {

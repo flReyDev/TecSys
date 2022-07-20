@@ -7,12 +7,12 @@ const { msg_jwt } = require('../helpers/msg');
  * @param {Model.Usuario} user 
  * @returns Token JWT
  */
-const generateJwt = async ( user )=>{
+const generateJwt = async ( _id, _role )=>{
     try {
         return jwt.sign(
             { 
-                _id: user.id,
-                _role: user.role.nombre
+                _id: _id,
+                _role: _role
             }, 
             process.env.JWT_SECRET,
             {
@@ -42,10 +42,10 @@ const verifyJwt = async ( token ) =>{
  * @param {*} _id 
  * @param {*} res 
  */
-const tokenRefresh = async ( _id, res = response ) =>{
+const tokenRefresh = async ( user, res = response ) =>{
 
     try {
-        const refrehsToken = jwt.sign({ _id }, process.env.JWT_REFRESH, { expiresIn: 60*60 })
+        const refrehsToken = jwt.sign({ _id: user._id, _role: user.role.nombre }, process.env.JWT_REFRESH, { expiresIn: 60*60 })
         res.cookie("refrehsToken", refrehsToken, {
             httpOnly: true,
             domain: "tecsys.com",
@@ -59,5 +59,6 @@ const tokenRefresh = async ( _id, res = response ) =>{
 
 module.exports  = {
     generateJwt,
-    verifyJwt
+    verifyJwt,
+    tokenRefresh
 }

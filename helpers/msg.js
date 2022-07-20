@@ -10,7 +10,8 @@ const msg_jwt = (msg) => {
         "jwt id invalid":               "Identificador del token no es valido!",
         "jwt subject invalid":          "Sujeto del token invalido!",
         "jwt expired":                  "El token expiro!",
-        "No Token":                     "No estas usando el Bearer token en el header!"
+        "No Token":                     "No estas usando el Bearer token en el header!",
+        "No Refresh Token":             "No tienes las credenciales necesarias para ingresar!"
     }
     return message[ msg ];
 }

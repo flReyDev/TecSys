@@ -1,6 +1,7 @@
 const { request, response } = require("express");
 const Actividades = require('../models/Actividades');
 const Materiales = require("../models/Materiales");
+const MaterialPorActividad = require("../models/MaterialPorActividad");
 
 /**
  * Funcion que recupera todos los materiales 
@@ -63,13 +64,35 @@ const getActividad = async (req = request, res=response)=>{
  */
  const postActividad= async (req = request, res=response)=>{
 
-    let { descripcion } = req.body;
+    let { descripcion, material } = req.body;
     
     try {
+
+    
+
       const actividad = await Actividades.create({ descripcion });
+
+      const materiales = await Materiales.bulkCreate(material);
+
+      let values = material;
+
+      for (let i=0; i < values.length; i++) {   
+         await actividad.addMateriales(materiales, 
+            { through: { 
+               cantidad:      values[i].relacion.cantidad, 
+               valorsiniva:   values[i].relacion.valorsiniva, 
+               iva:           values[i].relacion.iva, 
+               valortotal:    values[i].relacion.valortotal 
+             } });
+      }
+
+      
+
       const nueva_actividad = await actividad.save();
 
-      if(nueva_actividad.length < 1) return res.status(400).json({ error: 'La solicitud no se pudo completar!!' }); 
+      if(nueva_actividad.length < 1) 
+            return res.status(400).json({ error: 'La solicitud no se pudo completar!!' }); 
+
 
       res.status(200).json({ nueva_actividad })
 

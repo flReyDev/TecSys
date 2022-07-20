@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { body } = require('express-validator');
-const validRefreshToken = require("../controllers/auth.controller");
-const { register, login } = require("../controllers/usuarios.controller");
+const { register, login, validRefreshToken } = require("../auth/auth.controller");
+const tokenRefreshValidator = require("../middlewares/TokenRefreshValidator.middleware");
 const { validatorMiddlewares } = require("../middlewares/validator.middleware");
 
 const authRoutes = Router();
@@ -35,7 +35,7 @@ authRoutes.post('/register',[
 
 authRoutes.post('/login', login);
 
-authRoutes.post('/refresh', validRefreshToken);
+authRoutes.post('/refresh', tokenRefreshValidator, validRefreshToken);
 
 
 module.exports = authRoutes;
