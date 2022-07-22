@@ -19,7 +19,7 @@ const Items = dbConection.define('items', {
 
 // Relacion de muchos a muchos -> Muchas Actividades tienen muchos Items y muchos Items tienen muchas actividades
 //El modelo principal segun diseño es Items -> Acividades
-Items.belongsToMany(Actividades, { through: ActividadPorItem, foreignKey: 'itemId'})
-Actividades.belongsToMany(Items, { through: ActividadPorItem, foreignKey:'actividadId'})
+Items.belongsToMany(Actividades, { through: ActividadPorItem, foreignKey:   'itemId'})
+Actividades.belongsToMany(Items, { through: ActividadPorItem, foreignKey:   'actividadId'})
 
 module.exports = Items;

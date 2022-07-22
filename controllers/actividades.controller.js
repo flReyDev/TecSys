@@ -69,15 +69,23 @@ const getActividad = async (req = request, res=response)=>{
     
     try {
       const actividad = await Actividades.create({ descripcion });
-      const materiales = await Materiales.bulkCreate(material);
-         await actividad.addMateriales(materiales, 
+      // await Materiales.bulkCreate(material);
+      
+
+      for (const i of material) {
+
+        const [ materiale, created ] = await Materiales.findOrCreate({
+            where: { 'descripcion': i.descripcion }
+         })
+         
+         await actividad.addMateriales(materiale, 
             { through: { 
                cantidad:      0,  
                valorsiniva:   0,    
                iva:           0,      
                valortotal:    0
-             } });
-   
+             } });  
+      }
       const nueva_actividad = await actividad.save();
 
       if(nueva_actividad.length < 1) 

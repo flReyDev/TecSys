@@ -14,6 +14,7 @@ const routerArea = require("../routes/area.routes");
 const routerCargo = require("../routes/cargos.routes");
 const authRoutes = require("../routes/auth.routes");
 const whiteList = require("../helpers/whiteListCors");
+const routesActividadPorItem = require("../routes/actividadPorItem.routes");
 
 
 class Server{
@@ -28,7 +29,8 @@ class Server{
         materiales: '/material',
         actividades: '/actividad',
         area: '/area',
-        cargo: '/cargo'
+        cargo: '/cargo',
+        asocActItems: '/asoc'
     };
 
     constructor(){
@@ -82,11 +84,11 @@ class Server{
         this.app.use( this.apiRoutes.auth,          authRoutes )
         this.app.use( this.apiRoutes.proyectos,     routerProjects )
         this.app.use( this.apiRoutes.presupuestos,  routerPresupuesto )
-        this.app.use( this.apiRoutes.materiales,    routerMateriales)
+        this.app.use( this.apiRoutes.materiales,    routerMateriales )
         this.app.use( this.apiRoutes.actividades,   routerActividad )
         this.app.use( this.apiRoutes.area,          routerArea )
-        this.app.use( this.apiRoutes.cargo,         routerCargo)
-
+        this.app.use( this.apiRoutes.cargo,         routerCargo )
+        this.app.use( this.apiRoutes.asocActItems,  routesActividadPorItem )
 
         this.app.get('*', (req, res)=>{
             res.status(404).json({

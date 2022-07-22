@@ -5,6 +5,7 @@ const Items = require("../models/Items");
 const Materiales = require("../models/Materiales");
 const Presupuesto = require("../models/Presupuesto");
 const Usuario = require("../models/Usuario");
+const ItemsPresupuestados = require('../models/ItemsPresupuestados');
 
 /**
  * Función que permite obtener todos lo registros de presupuestos de la base de datos
@@ -63,27 +64,22 @@ const getPresupuesto = async (req = request, res = response)=>{
 const detailPresupuesto = async (req = request, res= response)=>{
     let { id } = req.params;
     try {
-        const presupuesto = await Presupuesto.findAll({
+        const presupuesto = await Presupuesto.findByPk(id, {
             include: [
                 {
                     model: Usuario,
                     attributes: [ 'nombre' ]
                 },
                 { 
-                    model: Items,
-                    required: false,
-                    attributes: ['nombre', 'descripcion', ], 
+                    model: Items, 
                     include:[ 
                         {
                             model: Actividades,
-                            attributes: ['descripcion'],
                             include: [Materiales]
                         }
-                    ]}
-            ],
-            where: {
-                id
-            }
+                    ]
+                }
+            ]
         })
         if(presupuesto.length < 1) return res.status(404).json({ error:  'No hay registros disponibles con ese identificador, valide e intente nuevamente!!'})
         res.status(200).json({ presupuesto })
