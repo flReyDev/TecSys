@@ -18,7 +18,7 @@ const getPresupuestos = async (req = request, res = response)=>{
     try {
 
         const presupuestos =  await Presupuesto.findAll();
-        if(presupuestos.length < 1) res.status(400).json({ errro: 'No existen presupuesto registrados!!' })
+        if(presupuestos.length < 1) res.status(400).json({ error: 'No existen presupuesto registrados!!' })
         res.status(200).json({presupuestos})
 
     } catch (error) {

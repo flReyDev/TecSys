@@ -52,19 +52,14 @@ class Server{
 
     middlewares(){
 
-
-        
-        //cors
-        // this.app.use(cors({
-        //     origin: function(origin, callback){
-        //         if(whiteList.includes(origin)){
-        //             return callback(null, origin);
-        //         }
-        //         return callback( `Seguridad de Cors, No estas autorizado para acceder desde ${ origin }` )
-        //     }
-        // }));
-
-        this.app.use( cors() )
+        this.app.use(cors({
+            origin: function(origin, callback){
+                if(whiteList.includes(origin)){
+                    return callback(null, origin);
+                }
+                return callback( `Seguridad de Cors, No estas autorizado para acceder desde ${ origin }` )
+            }
+        }));
 
         //parsear el contenido del body a Json()
         this.app.use(express.json());
